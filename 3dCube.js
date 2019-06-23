@@ -165,7 +165,6 @@ const yRotMat = identity();
 const zRotMat = identity();
 
 const identityMatrix = identity();
-var angle;
 let allMat = identity();
 
 const loop = function() {
