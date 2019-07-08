@@ -7,9 +7,52 @@
   <body>
     <div id="canvasDiv">
       <canvas width="600" height="600" id="can"></canvas>
+      <table>
+        <tr>
+          <th>
+            <p>by z</p>
+          </th>
+        </tr>
+        <tr>
+          <td>
+            <button onclick="zoomIn()">closer</button>
+            <button onclick="zoomOut()">further</button>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <p>by x</p>
+          </th>
+        </tr>
+        <tr>
+          <td>
+            <button onclick="moveRight()">right</button>
+            <button onclick="moveLeft()">left</button>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <p>by y</p>
+          </th>
+        </tr>
+        <tr>
+          <td>
+            <button onclick="moveUp()">down</button>
+            <button onclick="moveDown()">up</button>
+          </td>
+        </tr>
+      </table>
     </div>
-    <script src="glLib.js"></script>
-    <script src="libMatrix.js"></script>
+    <button onclick="reset()">reset</button>
+
+    <script src="parameters/vertexShaderText.js"></script>
+    <script src="parameters/fragmentShaderText.js"></script>
+    <script src="parameters/boxVert.js"></script>
+    <script src="parameters/boxIndexes.js"></script>
+    <script src="libs/glLib.js"></script>
+    <script src="libs/libMatrix.js"></script>
+    <script src="initialization.js"></script>
+    <script src="buttonsFunction.js"></script>
     <script src="3dCube.js"></script>
   </body>
 </html>

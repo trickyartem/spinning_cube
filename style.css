@@ -4,5 +4,5 @@ canvas {
 
 #canvasDiv {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
 }
