@@ -1,46 +1,46 @@
-const canvas = document.getElementById('can');
-const gl     = canvas.getContext('webgl');
+const glUtil = new WebGLUtils('can');
 
-if (!gl) {
-    throw new Error('WebGL not supported');
-}
+const {
+    VERTEX_SHADER,
+    FRAGMENT_SHADER,
+    ELEMENT_ARRAY_BUFFER,
+    ARRAY_BUFFER,
+    STATIC_DRAW,
+    FLOAT,
+    FALSE
+} = glUtil.gl;
 
-gl.clearColor(0.75, 0.85, 0.8, 1.0);
-gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+glUtil.loadShader(VERTEX_SHADER,   vertexShaderText,   'vertex shader');
+glUtil.loadShader(FRAGMENT_SHADER, fragmentShaderText, 'fragment shader');
 
-let vertexShader;
-let fragmentShader;
-let program;
-let boxIndexBufferObject;
-let boxVertBufferObject;
-let positionAttribLocation;
-let colorAttribLocation;
+glUtil.createProg();
 
-const make = new making (
-    vertexShader,
-    fragmentShader,
-    program,
-    boxIndexBufferObject,
-    boxVertBufferObject,
-    positionAttribLocation,
-    colorAttribLocation
+glUtil.createBuffer(ARRAY_BUFFER,         Float32Array, boxVert,    STATIC_DRAW);
+glUtil.createBuffer(ELEMENT_ARRAY_BUFFER, Uint16Array,  boxIndexes, STATIC_DRAW);
+
+glUtil.createAttribPointer(
+         'vertPosition', 
+          3, 
+          FLOAT, 
+    FALSE, 
+        6 * Float32Array.BYTES_PER_ELEMENT,
+        0
 );
 
-make.createCompileShader();
-make.createProgAttachShader();
-make.bindBuffers();
-make.attribs();
+glUtil.createAttribPointer(
+         'vertColor',
+          3,
+          FLOAT,
+    FALSE,
+        6 * Float32Array.BYTES_PER_ELEMENT,
+        3 * Float32Array.BYTES_PER_ELEMENT
+);
 
-vertexShader           = make.vertS;
-fragmentShader         = make.fragS;
-program                = make.p;
-boxIndexBufferObject   = make.bIBO;
-boxVertBufferObject    = make.bVBO;
-colorAttribLocation    = make.colAL;
-positionAttribLocation = make.posAL;
+glUtil.use();
+// u should not code like dis
 
-make.enableEverything();
-gl.useProgram(program);
+const { gl, program, canvas } = glUtil;
+
 
 const matWorldUniformLocation = gl.getUniformLocation(program, 'mWorld');
 const matViewUniformLocation  = gl.getUniformLocation(program, 'mView');
@@ -53,7 +53,7 @@ const projMatrix  = identity();
 glMatrix.mat4.perspective(projMatrix, glMatrix.glMatrix.toRadian(45), canvas.width / canvas.clientHeight, 0.1, 1000.0);
 
 gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
-gl.uniformMatrix4fv(matProjUniformLocation, gl.FALSE, projMatrix);
+gl.uniformMatrix4fv(matProjUniformLocation,  gl.FALSE, projMatrix);
 
 const xRotMat        = identity();
 const yRotMat        = identity();
