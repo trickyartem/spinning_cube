@@ -118,4 +118,52 @@ class WebGLUtils {
     use() {
         this.gl.useProgram(this.program);
     }
+
+    /**
+     * @param {String} name where to set the matrix
+     * @param {Boolean} camera set a view matrix, if you want to set view matrix type: true , otherwise: false
+     * @param {Boolean} projection set a projection matrix, if you want to set projection matrix type: true, otherwise: false
+     */
+
+    // set matrix, can set three types of matrix
+    setMatrix(name, camera, projection) {
+        const uniform = this.gl.getUniformLocation(this.program, name);
+        let mat4      = identity();
+
+        if (camera) {
+            this.viewMatrix = mat4;
+        } else if (projection) {
+            glMatrix.mat4.perspective(
+                mat4,
+                glMatrix.glMatrix.toRadian(45),
+                this.canvas.width / this.canvas.clientHeight,
+                0.1,
+                1000.0
+                );
+            this.gl.uniformMatrix4fv(uniform,  FALSE, mat4);
+            this.projMatrix = mat4;
+        } else {
+            this.gl.uniformMatrix4fv(uniform, this.gl.FALSE, mat4);
+            this.worldMatrix = mat4;
+        }
+
+        return uniform;
+    }
+
+    /**
+     * 
+     * @param {Number} type how to draw
+     */
+
+    // draw, can draw different types 
+    draw(type) {
+        this.gl.clearColor(0.5, 0.85, 0.6, 1.0);
+        this.gl.clear(this.gl.DEPTH_BUFFER_BIT | this.gl.COLOR_BUFFER_BIT);
+        this.gl.drawElements(type, boxIndexes.length, this.gl.UNSIGNED_SHORT, 0);
+    }
+    
+    dynamicCamera() {
+        glMatrix.mat4.lookAt(this.viewMatrix, [0, 0, far], [x, y, 0], [0, 0, 0]);
+        this.gl.uniformMatrix4fv(matViewUniformLocation, this.gl.FALSE, this.viewMatrix);
+    }
 }

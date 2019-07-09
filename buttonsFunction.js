@@ -1,3 +1,7 @@
+let far = -10;
+let x   = 0;
+let y   = 0;
+
 function zoomIn() {
     far++;
 }
