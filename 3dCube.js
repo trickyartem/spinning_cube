@@ -41,12 +41,15 @@ glUtil.createAttribPointer(
 
 glUtil.use();
 
-const matWorldUniformLocation = glUtil.setMatrix('mWorld', false, false);
-const matProjUniformLocation  = glUtil.setMatrix('mProj',  false, true);
-const matViewUniformLocation  = glUtil.setMatrix('mView',  true , false);
-
-// const viewMatrix  = identity();
-const viewMatrix  = glUtil.viewMatrix;
+let matProj  = identity();
+glMatrix.mat4.perspective(
+    matProj,
+    glMatrix.glMatrix.toRadian(45),
+    glUtil.canvas.width / glUtil.canvas.clientHeight,
+    0.1,
+    1000.0
+);
+glUtil.loadUniformMatrix4('mProj', matProj, FALSE);
 
 const xRotMat        = identity();
 const yRotMat        = identity();
@@ -54,11 +57,11 @@ const zRotMat        = identity();
 const identityMatrix = identity();
 let allMat           = identity();
 
-const loop = function() {
-    // glUtil.dynamicCamera();
-    glMatrix.mat4.lookAt(viewMatrix, [0, 0, far], [x, y, 0], [0, 1, 0]);
-    glUtil.gl.uniformMatrix4fv(matViewUniformLocation, FALSE, viewMatrix);
-    
+const loop = () => {
+    let matView  = identity();
+    glMatrix.mat4.lookAt(matView, [0, 0, -10], [0, 0, 0], [0, 1, 0]);
+    glUtil.loadUniformMatrix4('mView', matView, FALSE);
+
     angle = performance.now() / 1000 / 6 * 2 * Math.PI;
     glMatrix.mat4.rotate(yRotMat, identityMatrix, angle, [0, 1, 0]);
     glMatrix.mat4.rotate(xRotMat, identityMatrix, angle, [1, 0, 0]);
@@ -66,34 +69,10 @@ const loop = function() {
 
     glMatrix.mat4.mul(allMat, yRotMat, xRotMat);
     glMatrix.mat4.mul(allMat, allMat, zRotMat);
-
-    glMatrix.mat4.mul(glUtil.worldMatrix, allMat, xRotMat);
-    glUtil.gl.uniformMatrix4fv(matWorldUniformLocation, FALSE, glUtil.worldMatrix);
     
-    glUtil.draw(TRIANGLES);
-    requestAnimationFrame(loop);
+    let matWorld = identity();
+    glMatrix.mat4.mul(matWorld, allMat, xRotMat);
+    glUtil.loadUniformMatrix4('mWorld', matWorld, FALSE);
 }
-requestAnimationFrame(loop);
 
-
-
-// const matProjUniformLocation  = gl.getUniformLocation(program, 'mProj');
-// const matWorldUniformLocation = gl.getUniformLocation(program, 'mWorld');
-// const matViewUniformLocation  = gl.getUniformLocation(program, 'mView');
-// const glUtil.worldMatrix = identity();
-// const glUtil.projMatrix  = identity();
-// glMatrix.mat4.perspective(
-//     glUtil.projMatrix,
-//     glMatrix.glMatrix.toRadian(45),
-//     canvas.width / canvas.clientHeight,
-//     0.1,
-//     1000.0
-// );
-
-// gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, glUtil.worldMatrix);
-// gl.uniformMatrix4fv(matProjUniformLocation,  gl.FALSE, glUtil.projMatrix);
-
-
-// gl.clearColor(0.5, 0.85, 0.6, 1.0);
-// gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
-// gl.drawElements(gl.TRIANGLES, boxIndexes.length, gl.UNSIGNED_SHORT, 0);
+glUtil.draw(TRIANGLES, loop);
