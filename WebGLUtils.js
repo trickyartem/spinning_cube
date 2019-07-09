@@ -55,6 +55,10 @@ class WebGLUtils {
     }
 
     createProg() {
+        if (this.shaders.length === 0) {
+            throw new Error('there is no shaders to link');
+        }
+
         this.program = this.gl.createProgram();
 
         for (let i = 0; i < this.shaders.length; i++) {
@@ -116,6 +120,10 @@ class WebGLUtils {
     }
 
     use() {
+        if (this.program === undefined) {
+            throw new Error('Program does not exit');
+        }
+
         this.gl.useProgram(this.program);
     }
 
